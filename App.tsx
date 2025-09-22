@@ -1,52 +1,29 @@
-import { useState } from "react";
+import React from "react";
 import useLocalStorage from "./hooks/useLocalStorage";
+import CustomerForm from "./components/CustomerForm";
+import CustomerList from "./components/CustomerList";
 
-type Customer = {
+interface Customer {
   id: number;
   name: string;
   email: string;
-};
+}
 
-function App() {
+const App: React.FC = () => {
   const [customers, setCustomers] = useLocalStorage<Customer[]>("customers", []);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
 
-  const addCustomer = () => {
-    if (!name || !email) return;
+  const addCustomer = (name: string, email: string) => {
     const newCustomer = { id: Date.now(), name, email };
     setCustomers([...customers, newCustomer]);
-    setName("");
-    setEmail("");
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>Simple CRM</h1>
-
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button onClick={addCustomer}>Add</button>
-      </div>
-
-      <ul>
-        {customers.map((c) => (
-          <li key={c.id}>
-            {c.name} - {c.email}
-          </li>
-        ))}
-      </ul>
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">📋 قائمة العملاء</h1>
+      <CustomerForm onAddCustomer={addCustomer} />
+      <CustomerList customers={customers} />
     </div>
   );
-}
+};
 
 export default App;
