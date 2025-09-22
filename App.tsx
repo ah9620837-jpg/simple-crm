@@ -1,28 +1,50 @@
 import { useState } from "react";
+import useLocalStorage from "./hooks/useLocalStorage";
+
+type Customer = {
+  id: number;
+  name: string;
+  email: string;
+};
 
 function App() {
-  // استخدم useState عادي بدل useLocalStorage
+  const [customers, setCustomers] = useLocalStorage<Customer[]>("customers", []);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const addCustomer = () => {
+    if (!name || !email) return;
+    const newCustomer = { id: Date.now(), name, email };
+    setCustomers([...customers, newCustomer]);
+    setName("");
+    setEmail("");
+  };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>CRM المبيعات البسيط</h1>
-      <p>ده الإصدار التجريبي الأول!</p>
+      <h1>Simple CRM</h1>
 
-      <input
-        type="text"
-        placeholder="اكتب اسم العميل"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ padding: "8px", marginRight: "8px" }}
-      />
+      <div style={{ marginBottom: "10px" }}>
+        <input
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button onClick={addCustomer}>Add</button>
+      </div>
 
-      <button
-        onClick={() => alert(`تم حفظ العميل: ${name}`)}
-        style={{ padding: "8px 12px" }}
-      >
-        حفظ
-      </button>
+      <ul>
+        {customers.map((c) => (
+          <li key={c.id}>
+            {c.name} - {c.email}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
